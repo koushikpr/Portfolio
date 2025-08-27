@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Fonts */
+@font-face {
+  font-family: 'Bumbbled';
+  src: url('/fonts/Bumbbled.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYREGULAR.OTF') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYMEDIUM.OTF') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYBOLD.OTF') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYLIGHTITALIC.OTF') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYSEMIBOLDITALIC.OTF') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYBLACKITALIC.OTF') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYHEAVYITALIC.OTF') format('opentype');
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYTHINITALIC.OTF') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('/fonts/SFPRODISPLAYULTRALIGHTITALIC.OTF') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    @apply bg-mac-gray-50 text-mac-gray-900 antialiased;
+    @apply dark:bg-teal-dark-950 dark:text-teal-50;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* macOS UI Components */
+  .mac-window {
+    @apply bg-white/80 backdrop-blur-mac rounded-xl border border-white/20 shadow-mac-xl;
+    @apply dark:bg-teal-dark-900/80 dark:border-teal-dark-700/30;
+  }
+  
+  .mac-button {
+    @apply bg-mac-blue-500 hover:bg-mac-blue-600 text-white px-6 py-2 rounded-lg;
+    @apply transition-all duration-200 shadow-mac;
+    @apply dark:bg-teal-dark-600 dark:hover:bg-teal-dark-500;
+  }
+  
+  .mac-card {
+    @apply bg-white/60 backdrop-blur-mac rounded-2xl p-6 border border-white/30 shadow-mac-lg;
+    @apply dark:bg-teal-dark-900/60 dark:border-teal-dark-700/20;
+  }
+  
+  .mac-dock-item {
+    @apply flex items-center justify-center transition-all duration-200;
+    /* Remove all background, border, and shadow - icons should float freely */
+  }
+  
+  .mac-menubar {
+    @apply bg-white/80 backdrop-blur-mac border-b border-white/20;
+    @apply dark:bg-teal-dark-900/80 dark:border-teal-dark-700/30;
+  }
+  
+  .mac-gradient-text {
+    @apply bg-gradient-to-r from-mac-blue-600 to-mac-purple bg-clip-text text-transparent;
+  }
+  
+  .mac-sidebar {
+    @apply bg-mac-gray-100/80 backdrop-blur-mac border-r border-mac-gray-200/50;
+    @apply dark:bg-teal-dark-800/80 dark:border-teal-dark-600/20;
+  }
+}
+
+@layer utilities {
+  .bumbbled-font {
+    font-family: 'Bumbbled', system-ui, sans-serif;
+  }
+  
+  .sf-font {
+    font-family: 'SF Pro Display', system-ui, sans-serif;
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .glow-effect {
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+  }
+}
