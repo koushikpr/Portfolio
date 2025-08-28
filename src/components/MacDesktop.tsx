@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '../contexts/ThemeContext'
+import EducationFinderWindow from './EducationFinderWindow'
 
 interface FolderItem {
   id: string
@@ -17,35 +18,44 @@ const MacDesktop = () => {
   
   const [folders, setFolders] = useState<FolderItem[]>([
     // Left side - Professional folders
-    { id: 'about', name: 'About Me', x: 60, y: 120, icon: '/folder-icon.webp', section: 'about' },
-    { id: 'projects', name: 'My Projects', x: 60, y: 240, icon: '/folder-icon.webp', section: 'projects' },
-    { id: 'experience', name: 'Work Experience', x: 60, y: 360, icon: '/folder-icon.webp', section: 'experience' },
+    { id: 'about', name: 'About Me', x: 60, y: 120, icon: '/contactme-folder.png', section: 'about' },
+    { id: 'projects', name: 'My Projects', x: 60, y: 240, icon: '/projects-folder.png', section: 'projects' },
+    { id: 'experience', name: 'Work Experience', x: 60, y: 360, icon: '/folder-icon.png', section: 'experience' },
     
     // Right side - Education & Achievements
-    { id: 'education', name: 'Education', x: 180, y: 120, icon: '/folder-icon.webp', section: 'education' },
-    { id: 'certifications', name: 'Certifications', x: 180, y: 240, icon: '/folder-icon.webp', section: 'certifications' },
-    { id: 'achievements', name: 'Achievements', x: 180, y: 360, icon: '/folder-icon.webp', section: 'achievements' },
+    { id: 'education', name: 'Education', x: 180, y: 120, icon: '/education-folder.png', section: 'education' },
+    { id: 'certifications', name: 'Certifications', x: 180, y: 240, icon: '/certifications-folder.png', section: 'certifications' },
+    { id: 'achievements', name: 'Achievements', x: 180, y: 360, icon: '/achievements-folder.png', section: 'achievements' },
     
-    // Bottom area - Documents & Contact
+    // Bottom area - Documents
     { id: 'resume', name: 'Resume.pdf', x: 60, y: 480, icon: '/document.png' },
-    { id: 'contact', name: 'Contact Info', x: 180, y: 480, icon: '/folder-icon.webp' },
   ])
 
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const [openFinderWindow, setOpenFinderWindow] = useState(false)
+  const [finderWindowOrigin, setFinderWindowOrigin] = useState({ x: 0, y: 0 })
+  const [finderWindowFolder, setFinderWindowFolder] = useState<string>('education')
 
   const handleFolderDoubleClick = (folder: FolderItem) => {
-    if (folder.section) {
-      const element = document.querySelector(`#${folder.section}`)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+    // Check if folder should open Finder window
+    const finderFolders = ['about', 'education', 'achievements', 'projects', 'certifications', 'experience']
+    
+    if (finderFolders.includes(folder.id)) {
+      // Open Finder Window with appropriate folder
+      const folderElement = document.querySelector(`[data-folder-id="${folder.id}"]`)
+      if (folderElement) {
+        const rect = folderElement.getBoundingClientRect()
+        setFinderWindowOrigin({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        })
       }
+      setFinderWindowFolder(folder.id)
+      setOpenFinderWindow(true)
     } else if (folder.id === 'resume') {
       // Handle resume download
       console.log('Download resume')
-    } else if (folder.id === 'contact') {
-      // Handle contact
-      console.log('Open contact')
     }
   }
 
@@ -121,6 +131,7 @@ const MacDesktop = () => {
       {folders.map((folder) => (
         <motion.div
           key={folder.id}
+          data-folder-id={folder.id}
           className={`absolute cursor-pointer group ${
             selectedFolder === folder.id ? 'z-50' : 'z-10'
           }`}
@@ -217,6 +228,18 @@ const MacDesktop = () => {
           </h1>
         </div>
       </motion.div>
+
+      {/* Finder Window */}
+      <AnimatePresence>
+        {openFinderWindow && (
+          <EducationFinderWindow 
+            onClose={() => setOpenFinderWindow(false)}
+            originX={finderWindowOrigin.x}
+            originY={finderWindowOrigin.y}
+            initialFolder={finderWindowFolder}
+          />
+        )}
+      </AnimatePresence>
     </section>
   )
 }

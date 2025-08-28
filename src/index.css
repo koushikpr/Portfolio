@@ -146,4 +146,11 @@
   .glow-effect {
     filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
   }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
