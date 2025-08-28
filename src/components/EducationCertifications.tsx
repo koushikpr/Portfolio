@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Calendar, MapPin, GraduationCap, Award, BookOpen, Shield, ExternalLink, Cloud, ChevronRight, Users, Trophy, Star } from 'lucide-react'
+import { Calendar, MapPin, GraduationCap, Award, BookOpen, Shield, ExternalLink, Cloud, Trophy, Star } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
 
 interface EducationItem {

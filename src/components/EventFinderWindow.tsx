@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Calendar, MapPin, Users, Clock, BookOpen, File, Folder } from 'lucide-react'
-import { useTheme } from '../contexts/ThemeContext'
+import { useState, useEffect } from 'react'
+import { Calendar, MapPin, Users, Clock, BookOpen } from 'lucide-react'
+
 
 interface EventFinderWindowProps {
   onClose: () => void
@@ -25,7 +25,6 @@ interface FolderContent {
 }
 
 const EventFinderWindow = ({ onClose, originX, originY, initialFolder = 'events' }: EventFinderWindowProps) => {
-  const { isDark } = useTheme()
   const [selectedFolder, setSelectedFolder] = useState<string | null>(initialFolder)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -206,6 +205,13 @@ const EventFinderWindow = ({ onClose, originX, originY, initialFolder = 'events'
   // Get current folder contents
   const currentFolderContents = selectedFolder ? folderContents[selectedFolder] || [] : []
   
+  // Auto-select first item when folder changes
+  useEffect(() => {
+    if (currentFolderContents.length > 0) {
+      setSelectedFile(currentFolderContents[0].id)
+    }
+  }, [selectedFolder, currentFolderContents])
+  
   // Get selected file details
   const selectedFileDetails = selectedFile ? currentFolderContents.find(file => file.id === selectedFile) : null
 
@@ -346,8 +352,18 @@ const EventFinderWindow = ({ onClose, originX, originY, initialFolder = 'events'
                   <motion.button
                     key={folder.id}
                     onClick={() => {
-                      setSelectedFolder(folder.id)
-                      setSelectedFile(null) // Reset file selection when changing folders
+                      if (folder.id === 'events') {
+                        // Stay in current window, just switch folder
+                        setSelectedFolder(folder.id)
+                        setSelectedFile(null)
+                      } else {
+                        // Close current window and trigger opening of the appropriate FinderWindow
+                        onClose()
+                        // Dispatch custom event to open the corresponding FinderWindow
+                        window.dispatchEvent(new CustomEvent('openFinderWindow', { 
+                          detail: { folder: folder.id } 
+                        }))
+                      }
                     }}
                     className={`w-full px-2 py-1 text-left rounded text-xs flex items-center gap-2 transition-all duration-100 ${
                       selectedFolder === folder.id

@@ -1,10 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '../contexts/ThemeContext'
-import EducationFinderWindow from './EducationFinderWindow'
-import ProjectsFinderWindow from './ProjectsFinderWindow'
-import ExperienceFinderWindow from './ExperienceFinderWindow'
-import EventFinderWindow from './EventFinderWindow'
+import MasterFinderWindow from './MasterFinderWindow'
 import PDFViewer from './PDFViewer'
 
 interface FolderItem {
@@ -42,6 +39,8 @@ const MacDesktop = () => {
   const [finderWindowFolder, setFinderWindowFolder] = useState<string>('education')
   const [openPDFViewer, setOpenPDFViewer] = useState(false)
   const [pdfViewerOrigin, setPdfViewerOrigin] = useState({ x: 0, y: 0 })
+
+
 
   const handleFolderDoubleClick = (folder: FolderItem) => {
     // Check if folder should open Finder window
@@ -244,39 +243,16 @@ const MacDesktop = () => {
       </motion.div>
 
       {/* Finder Window */}
-      <AnimatePresence>
-        {openFinderWindow && (
-          finderWindowFolder === 'projects' ? (
-            <ProjectsFinderWindow 
-              onClose={() => setOpenFinderWindow(false)}
-              originX={finderWindowOrigin.x}
-              originY={finderWindowOrigin.y}
-              initialFolder={finderWindowFolder}
-            />
-          ) : finderWindowFolder === 'experience' ? (
-            <ExperienceFinderWindow 
-              onClose={() => setOpenFinderWindow(false)}
-              originX={finderWindowOrigin.x}
-              originY={finderWindowOrigin.y}
-              initialFolder={finderWindowFolder}
-            />
-          ) : finderWindowFolder === 'events' ? (
-            <EventFinderWindow 
-              onClose={() => setOpenFinderWindow(false)}
-              originX={finderWindowOrigin.x}
-              originY={finderWindowOrigin.y}
-              initialFolder={finderWindowFolder}
-            />
-          ) : (
-            <EducationFinderWindow 
-              onClose={() => setOpenFinderWindow(false)}
-              originX={finderWindowOrigin.x}
-              originY={finderWindowOrigin.y}
-              initialFolder={finderWindowFolder}
-            />
-          )
-        )}
-      </AnimatePresence>
+                  <AnimatePresence>
+              {openFinderWindow && (
+                <MasterFinderWindow 
+                  onClose={() => setOpenFinderWindow(false)}
+                  originX={finderWindowOrigin.x}
+                  originY={finderWindowOrigin.y}
+                  initialFolder={finderWindowFolder}
+                />
+              )}
+            </AnimatePresence>
 
       {/* PDF Viewer */}
       <AnimatePresence>

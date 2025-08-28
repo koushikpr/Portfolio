@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Calendar, MapPin, GraduationCap, Award, BookOpen, Users, Trophy, Star, X, File, Folder, ChevronRight } from 'lucide-react'
-import { useTheme } from '../contexts/ThemeContext'
+import { useState, useEffect } from 'react'
+import { Calendar, MapPin, GraduationCap, BookOpen } from 'lucide-react'
+
 
 interface EducationFinderWindowProps {
   onClose: () => void
@@ -25,7 +25,6 @@ interface FolderContent {
 }
 
 const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'education' }: EducationFinderWindowProps) => {
-  const { isDark } = useTheme()
   const [selectedFolder, setSelectedFolder] = useState<string | null>(initialFolder)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -63,7 +62,7 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
           location: 'Hoboken, New Jersey',
           duration: 'September 2024 – December 2025',
           status: 'In Progress',
-          collegeLogo: '/stevens.png',
+          collegeLogo: '/stevens.webp',
           institutionBanner: '/stevensb.webp',
           overview: 'Currently pursuing a Master\'s degree in Computer Science with a specialization in Enterprise and Cloud Computing. This program combines theoretical foundations with hands-on experience in modern cloud technologies and enterprise systems.',
           courses: [
@@ -159,6 +158,13 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
 
   // Get current folder contents
   const currentFolderContents = selectedFolder ? folderContents[selectedFolder] || [] : []
+  
+  // Auto-select first item when folder changes
+  useEffect(() => {
+    if (currentFolderContents.length > 0) {
+      setSelectedFile(currentFolderContents[0].id)
+    }
+  }, [selectedFolder, currentFolderContents])
   
   // Get selected file details
   const selectedFileDetails = selectedFile ? currentFolderContents.find(file => file.id === selectedFile) : null
@@ -300,8 +306,18 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
                   <motion.button
                     key={folder.id}
                     onClick={() => {
-                      setSelectedFolder(folder.id)
-                      setSelectedFile(null) // Reset file selection when changing folders
+                      if (folder.id === 'education') {
+                        // Stay in current window, just switch folder
+                        setSelectedFolder(folder.id)
+                        setSelectedFile(null)
+                      } else {
+                        // Close current window and trigger opening of the appropriate FinderWindow
+                        onClose()
+                        // Dispatch custom event to open the corresponding FinderWindow
+                        window.dispatchEvent(new CustomEvent('openFinderWindow', { 
+                          detail: { folder: folder.id } 
+                        }))
+                      }
                     }}
                     className={`w-full px-2 py-1 text-left rounded text-xs flex items-center gap-2 transition-all duration-100 ${
                       selectedFolder === folder.id

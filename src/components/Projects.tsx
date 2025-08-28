@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ExternalLink, Github, Calendar, MapPin, Users } from 'lucide-react'
+import { ExternalLink, Github, Calendar, Users } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
 
 interface Project {
@@ -147,7 +147,7 @@ const Projects = () => {
           animate="visible"
           className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 auto-rows-fr"
         >
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <motion.div
               key={project.id}
               variants={itemVariants}

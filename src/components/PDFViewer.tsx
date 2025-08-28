@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { X, Download, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
-import { useTheme } from '../contexts/ThemeContext'
+import { Download } from 'lucide-react'
 
 interface PDFViewerProps {
   onClose: () => void
@@ -12,7 +11,7 @@ interface PDFViewerProps {
 }
 
 const PDFViewer = ({ onClose, originX, originY, pdfUrl, title }: PDFViewerProps) => {
-  const { isDark } = useTheme()
+
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [windowPosition, setWindowPosition] = useState({ x: 0, y: 0 })

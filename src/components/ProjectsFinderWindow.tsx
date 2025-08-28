@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Calendar, MapPin, GraduationCap, Award, BookOpen, Users, Trophy, Star, X, File, Folder, ChevronRight, Github, ExternalLink } from 'lucide-react'
-import { useTheme } from '../contexts/ThemeContext'
+import { useState, useEffect } from 'react'
+import { BookOpen, Github } from 'lucide-react'
+
 
 interface ProjectsFinderWindowProps {
   onClose: () => void
@@ -25,7 +25,6 @@ interface FolderContent {
 }
 
 const ProjectsFinderWindow = ({ onClose, originX, originY, initialFolder = 'projects' }: ProjectsFinderWindowProps) => {
-  const { isDark } = useTheme()
   const [selectedFolder, setSelectedFolder] = useState<string | null>(initialFolder)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -239,6 +238,13 @@ const ProjectsFinderWindow = ({ onClose, originX, originY, initialFolder = 'proj
   // Get current folder contents
   const currentFolderContents = selectedFolder ? folderContents[selectedFolder] || [] : []
   
+  // Auto-select first item when folder changes
+  useEffect(() => {
+    if (currentFolderContents.length > 0) {
+      setSelectedFile(currentFolderContents[0].id)
+    }
+  }, [selectedFolder, currentFolderContents])
+  
   // Get selected file details
   const selectedFileDetails = selectedFile ? currentFolderContents.find(file => file.id === selectedFile) : null
 
@@ -379,8 +385,18 @@ const ProjectsFinderWindow = ({ onClose, originX, originY, initialFolder = 'proj
                   <motion.button
                     key={folder.id}
                     onClick={() => {
-                      setSelectedFolder(folder.id)
-                      setSelectedFile(null) // Reset file selection when changing folders
+                      if (folder.id === 'projects') {
+                        // Stay in current window, just switch folder
+                        setSelectedFolder(folder.id)
+                        setSelectedFile(null)
+                      } else {
+                        // Close current window and trigger opening of the appropriate FinderWindow
+                        onClose()
+                        // Dispatch custom event to open the corresponding FinderWindow
+                        window.dispatchEvent(new CustomEvent('openFinderWindow', { 
+                          detail: { folder: folder.id } 
+                        }))
+                      }
                     }}
                     className={`w-full px-2 py-1 text-left rounded text-xs flex items-center gap-2 transition-all duration-100 ${
                       selectedFolder === folder.id

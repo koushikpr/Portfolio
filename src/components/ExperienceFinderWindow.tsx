@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Calendar, MapPin, Briefcase, ChevronRight, BookOpen, File, Folder } from 'lucide-react'
-import { useTheme } from '../contexts/ThemeContext'
+import { useState, useEffect } from 'react'
+import { Calendar, MapPin, Briefcase, BookOpen, ChevronRight } from 'lucide-react'
+
 
 interface ExperienceFinderWindowProps {
   onClose: () => void
@@ -25,7 +25,6 @@ interface FolderContent {
 }
 
 const ExperienceFinderWindow = ({ onClose, originX, originY, initialFolder = 'experience' }: ExperienceFinderWindowProps) => {
-  const { isDark } = useTheme()
   const [selectedFolder, setSelectedFolder] = useState<string | null>(initialFolder)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -100,7 +99,7 @@ const ExperienceFinderWindow = ({ onClose, originX, originY, initialFolder = 'ex
         icon: '/folder-icon.png',
                  content: {
            title: 'Teaching Assistant (Enterprise and Cloud Computing)',
-           company: 'Stevens Institute of Technology',
+           company: 'Stevens Institute of Tech.',
            location: 'Hoboken, New Jersey',
            duration: 'September 2025 – Present',
            type: 'Academic',
@@ -115,17 +114,17 @@ const ExperienceFinderWindow = ({ onClose, originX, originY, initialFolder = 'ex
       },
       { 
         id: 'sellwizr', 
-        name: 'Summer Internship - Software Development (Infrastructure)', 
+        name: 'Software Development Intern(Infrastructure)', 
         type: 'folder', 
         size: '--', 
         dateModified: 'Aug 26, 2025', 
         icon: '/folder-icon.png',
                  content: {
-           title: 'Summer Internship - Software Development (Infrastructure)',
+           title: 'Software Development Intern(Infrastructure)',
            company: 'SellWizr',
            location: 'Manhattan, New York',
            duration: 'June 2025 – August 2025',
-           type: 'Internship',
+           type: 'Summer Internship',
            companyBanner: '/image.png',
            description: [
              'Built Terraform modules to automate deployment of a 3-tier application, cutting deployment time to under 10 minutes',
@@ -180,6 +179,13 @@ const ExperienceFinderWindow = ({ onClose, originX, originY, initialFolder = 'ex
 
   // Get current folder contents
   const currentFolderContents = selectedFolder ? folderContents[selectedFolder] || [] : []
+  
+  // Auto-select first item when folder changes
+  useEffect(() => {
+    if (currentFolderContents.length > 0) {
+      setSelectedFile(currentFolderContents[0].id)
+    }
+  }, [selectedFolder, currentFolderContents])
   
   // Get selected file details
   const selectedFileDetails = selectedFile ? currentFolderContents.find(file => file.id === selectedFile) : null
@@ -321,8 +327,18 @@ const ExperienceFinderWindow = ({ onClose, originX, originY, initialFolder = 'ex
                   <motion.button
                     key={folder.id}
                     onClick={() => {
-                      setSelectedFolder(folder.id)
-                      setSelectedFile(null) // Reset file selection when changing folders
+                      if (folder.id === 'experience') {
+                        // Stay in current window, just switch folder
+                        setSelectedFolder(folder.id)
+                        setSelectedFile(null)
+                      } else {
+                        // Close current window and trigger opening of the appropriate FinderWindow
+                        onClose()
+                        // Dispatch custom event to open the corresponding FinderWindow
+                        window.dispatchEvent(new CustomEvent('openFinderWindow', { 
+                          detail: { folder: folder.id } 
+                        }))
+                      }
                     }}
                     className={`w-full px-2 py-1 text-left rounded text-xs flex items-center gap-2 transition-all duration-100 ${
                       selectedFolder === folder.id

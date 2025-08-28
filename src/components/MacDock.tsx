@@ -2,14 +2,13 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 
 import CalendarIcon from './CalendarIcon'
-import EducationFinderWindow from './EducationFinderWindow'
-import ProjectsFinderWindow from './ProjectsFinderWindow'
-import ExperienceFinderWindow from './ExperienceFinderWindow'
-import EventFinderWindow from './EventFinderWindow'
+import MasterFinderWindow from './MasterFinderWindow'
 
 const MacDock = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [openWindows, setOpenWindows] = useState<Array<{id: string, title: string, originX: number, originY: number, folder: string, isMinimized: boolean}>>([])
+
+
 
   const handleDockItemClick = (folderId: string, title: string, folder: string) => {
     const existingWindow = openWindows.find(window => window.id === folderId)
@@ -58,10 +57,10 @@ const MacDock = () => {
     { id: 'launchpad', name: 'Launchpad', icon: null, section: 'launchpad', isCustomIcon: true, iconPath: '/launchpad-bigsur.png' },
     { id: 'appstore', name: 'App Store', icon: null, section: 'appstore', isCustomIcon: true, iconPath: '/appstore.png' },
     { id: 'projects', name: 'Projects', icon: null, section: 'projects', isCustomIcon: true, iconPath: '/vscode.png' },
-    { id: 'experience', name: 'Experience', icon: null, section: 'experience', isCustomIcon: true, iconPath: '/folder-icon.png' },
+    { id: 'experience', name: 'Experience', icon: null, section: 'experience', isCustomIcon: true, iconPath: '/certifications-folder.png' },
     { id: 'education', name: 'Education', icon: null, section: 'education', isCustomIcon: true, iconPath: '/education-folder.png' },
-    { id: 'certifications', name: 'Certifications', icon: null, section: 'certifications', isCustomIcon: true, iconPath: '/certifications-folder.png' },
-    { id: 'achievements', name: 'Achievements', icon: null, section: 'achievements', isCustomIcon: true, iconPath: '/achievements-folder.png' },
+    { id: 'certifications', name: 'Certifications', icon: null, section: 'certifications', isCustomIcon: true, iconPath: '/achievements-folder.png' },
+    { id: 'events', name: 'Events', icon: null, section: 'events', isCustomIcon: true, iconPath: '/folder-icon.png' },
     { id: 'calendar', name: 'Calendar', icon: null, section: 'calendar', isCustomIcon: true, isDynamic: true },
     { id: 'github', name: 'GitHub', icon: null, section: 'github', isCustomIcon: true, iconPath: '/github.png' },
     { id: 'linkedin', name: 'LinkedIn', icon: null, section: 'linkedin', isCustomIcon: true, iconPath: '/linkedin.webp' },
@@ -95,6 +94,8 @@ const MacDock = () => {
       console.log('App Store clicked')
       return
     }
+
+
     if (sectionId === 'folder') {
       // Open folder window
       handleDockItemClick('folder', 'Portfolio Files', 'about')
@@ -102,9 +103,14 @@ const MacDock = () => {
     }
     
     // Handle portfolio folders that should open Finder windows
-    const portfolioFolders = ['projects', 'experience', 'education', 'certifications', 'achievements']
+    const portfolioFolders = ['projects', 'experience', 'education', 'certifications', 'events']
     if (portfolioFolders.includes(sectionId)) {
       handleDockItemClick(sectionId, sectionId.charAt(0).toUpperCase() + sectionId.slice(1), sectionId)
+      return
+    }
+    if (sectionId === 'contact') {
+      // Open default email client with your email address
+      window.location.href = 'mailto:kravikum1@stevens.edu'
       return
     }
     if (sectionId === 'contacts') {
@@ -133,41 +139,15 @@ const MacDock = () => {
   return (
     <>
       {/* Finder Windows */}
-      {openWindows.filter(window => !window.isMinimized).map((window) => (
-        window.folder === 'projects' ? (
-          <ProjectsFinderWindow
-            key={window.id}
-            onClose={() => closeFolderWindow(window.id)}
-            originX={window.originX}
-            originY={window.originY}
-            initialFolder={window.folder}
-          />
-        ) : window.folder === 'experience' ? (
-          <ExperienceFinderWindow
-            key={window.id}
-            onClose={() => closeFolderWindow(window.id)}
-            originX={window.originX}
-            originY={window.originY}
-            initialFolder={window.folder}
-          />
-        ) : window.folder === 'events' ? (
-          <EventFinderWindow
-            key={window.id}
-            onClose={() => closeFolderWindow(window.id)}
-            originX={window.originX}
-            originY={window.originY}
-            initialFolder={window.folder}
-          />
-        ) : (
-          <EducationFinderWindow
-            key={window.id}
-            onClose={() => closeFolderWindow(window.id)}
-            originX={window.originX}
-            originY={window.originY}
-            initialFolder={window.folder}
-          />
-        )
-      ))}
+                  {openWindows.filter(window => !window.isMinimized).map((window) => (
+              <MasterFinderWindow
+                key={window.id}
+                onClose={() => closeFolderWindow(window.id)}
+                originX={window.originX}
+                originY={window.originY}
+                initialFolder={window.folder}
+              />
+            ))}
 
       {/* Dock */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">

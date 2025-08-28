@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Minus, Square, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 
 interface FolderWindowProps {
   isOpen: boolean

@@ -108,7 +108,7 @@ const Publications = () => {
           animate="visible"
           className="space-y-8 mb-16"
         >
-          {publications.map((publication, index) => (
+          {publications.map((publication) => (
             <motion.div
               key={publication.id}
               variants={itemVariants}

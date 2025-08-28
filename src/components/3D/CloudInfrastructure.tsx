@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react'
+import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Float, Sphere, Box, Cylinder, Line } from '@react-three/drei'
 import * as THREE from 'three'
@@ -90,7 +90,7 @@ const CloudInfrastructure = () => {
       {connections.map((connection, index) => (
         <Line
           key={index}
-          points={connection}
+          points={connection as [number, number, number][]}
           color="#14b8a6"
           lineWidth={2}
           transparent
