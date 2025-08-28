@@ -4,9 +4,8 @@ import MacMenuBar from './components/MacMenuBar'
 import MacDesktop from './components/MacDesktop'
 import MacDock from './components/MacDock'
 import MacBootScreen from './components/MacBootScreen'
-import Projects from './components/Projects'
 import Experience from './components/Experience'
-import EducationCertifications from './components/EducationCertifications'
+
 import Publications from './components/Publications'
 import Skills from './components/Skills'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -35,20 +34,13 @@ function App() {
               <MacDesktop />
             </div>
             
-            <div id="education">
-              <EducationCertifications />
+
+            <div id="skills">
+              <Skills />
             </div>
             
             <div id="experience">
               <Experience />
-            </div>
-            
-            <div id="projects">
-              <Projects />
-            </div>
-            
-            <div id="skills">
-              <Skills />
             </div>
             
             <div id="achievements">

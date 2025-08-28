@@ -2,6 +2,10 @@ import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '../contexts/ThemeContext'
 import EducationFinderWindow from './EducationFinderWindow'
+import ProjectsFinderWindow from './ProjectsFinderWindow'
+import ExperienceFinderWindow from './ExperienceFinderWindow'
+import EventFinderWindow from './EventFinderWindow'
+import PDFViewer from './PDFViewer'
 
 interface FolderItem {
   id: string
@@ -19,13 +23,13 @@ const MacDesktop = () => {
   const [folders, setFolders] = useState<FolderItem[]>([
     // Left side - Professional folders
     { id: 'about', name: 'About Me', x: 60, y: 120, icon: '/contactme-folder.png', section: 'about' },
-    { id: 'projects', name: 'My Projects', x: 60, y: 240, icon: '/projects-folder.png', section: 'projects' },
-    { id: 'experience', name: 'Work Experience', x: 60, y: 360, icon: '/folder-icon.png', section: 'experience' },
+    { id: 'projects', name: 'My Projects', x: 60, y: 240, icon: '/cloud.png', section: 'projects' },
+    { id: 'experience', name: 'Work Experience', x: 60, y: 360, icon: '/certifications-folder.png', section: 'experience' },
     
     // Right side - Education & Achievements
     { id: 'education', name: 'Education', x: 180, y: 120, icon: '/education-folder.png', section: 'education' },
-    { id: 'certifications', name: 'Certifications', x: 180, y: 240, icon: '/certifications-folder.png', section: 'certifications' },
-    { id: 'achievements', name: 'Achievements', x: 180, y: 360, icon: '/achievements-folder.png', section: 'achievements' },
+    { id: 'certifications', name: 'Certifications', x: 180, y: 240, icon: '/achievements-folder.png', section: 'certifications' },
+    { id: 'events', name: 'Events and Publications', x: 180, y: 360, icon: '/folder-icon.png', section: 'events' },
     
     // Bottom area - Documents
     { id: 'resume', name: 'Resume.pdf', x: 60, y: 480, icon: '/document.png' },
@@ -36,10 +40,12 @@ const MacDesktop = () => {
   const [openFinderWindow, setOpenFinderWindow] = useState(false)
   const [finderWindowOrigin, setFinderWindowOrigin] = useState({ x: 0, y: 0 })
   const [finderWindowFolder, setFinderWindowFolder] = useState<string>('education')
+  const [openPDFViewer, setOpenPDFViewer] = useState(false)
+  const [pdfViewerOrigin, setPdfViewerOrigin] = useState({ x: 0, y: 0 })
 
   const handleFolderDoubleClick = (folder: FolderItem) => {
     // Check if folder should open Finder window
-    const finderFolders = ['about', 'education', 'achievements', 'projects', 'certifications', 'experience']
+    const finderFolders = ['about', 'education', 'achievements', 'projects', 'certifications', 'experience', 'events']
     
     if (finderFolders.includes(folder.id)) {
       // Open Finder Window with appropriate folder
@@ -54,8 +60,16 @@ const MacDesktop = () => {
       setFinderWindowFolder(folder.id)
       setOpenFinderWindow(true)
     } else if (folder.id === 'resume') {
-      // Handle resume download
-      console.log('Download resume')
+      // Open PDF viewer for resume
+      const folderElement = document.querySelector(`[data-folder-id="${folder.id}"]`)
+      if (folderElement) {
+        const rect = folderElement.getBoundingClientRect()
+        setPdfViewerOrigin({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        })
+      }
+      setOpenPDFViewer(true)
     }
   }
 
@@ -232,11 +246,47 @@ const MacDesktop = () => {
       {/* Finder Window */}
       <AnimatePresence>
         {openFinderWindow && (
-          <EducationFinderWindow 
-            onClose={() => setOpenFinderWindow(false)}
-            originX={finderWindowOrigin.x}
-            originY={finderWindowOrigin.y}
-            initialFolder={finderWindowFolder}
+          finderWindowFolder === 'projects' ? (
+            <ProjectsFinderWindow 
+              onClose={() => setOpenFinderWindow(false)}
+              originX={finderWindowOrigin.x}
+              originY={finderWindowOrigin.y}
+              initialFolder={finderWindowFolder}
+            />
+          ) : finderWindowFolder === 'experience' ? (
+            <ExperienceFinderWindow 
+              onClose={() => setOpenFinderWindow(false)}
+              originX={finderWindowOrigin.x}
+              originY={finderWindowOrigin.y}
+              initialFolder={finderWindowFolder}
+            />
+          ) : finderWindowFolder === 'events' ? (
+            <EventFinderWindow 
+              onClose={() => setOpenFinderWindow(false)}
+              originX={finderWindowOrigin.x}
+              originY={finderWindowOrigin.y}
+              initialFolder={finderWindowFolder}
+            />
+          ) : (
+            <EducationFinderWindow 
+              onClose={() => setOpenFinderWindow(false)}
+              originX={finderWindowOrigin.x}
+              originY={finderWindowOrigin.y}
+              initialFolder={finderWindowFolder}
+            />
+          )
+        )}
+      </AnimatePresence>
+
+      {/* PDF Viewer */}
+      <AnimatePresence>
+        {openPDFViewer && (
+          <PDFViewer 
+            onClose={() => setOpenPDFViewer(false)}
+            originX={pdfViewerOrigin.x}
+            originY={pdfViewerOrigin.y}
+            pdfUrl="/resume.pdf"
+            title="Resume - Koushik Ravikumar.pdf"
           />
         )}
       </AnimatePresence>

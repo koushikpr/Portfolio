@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Calendar, MapPin, GraduationCap, Award, BookOpen, Users, Trophy, Star, X, File, Folder, ChevronRight } from 'lucide-react'
+import { Calendar, MapPin, GraduationCap, Award, BookOpen, Users, Trophy, Star, X, File, Folder, ChevronRight, Github, ExternalLink } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
 
-interface EducationFinderWindowProps {
+interface ProjectsFinderWindowProps {
   onClose: () => void
   originX: number
   originY: number
@@ -24,7 +24,7 @@ interface FolderContent {
   [key: string]: FileItem[]
 }
 
-const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'education' }: EducationFinderWindowProps) => {
+const ProjectsFinderWindow = ({ onClose, originX, originY, initialFolder = 'projects' }: ProjectsFinderWindowProps) => {
   const { isDark } = useTheme()
   const [selectedFolder, setSelectedFolder] = useState<string | null>(initialFolder)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
@@ -32,105 +32,187 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [windowPosition, setWindowPosition] = useState({ x: 0, y: 0 })
 
+  // Function to categorize and color skills
+  const getSkillColor = (skill: string) => {
+    const cloudSkills = [
+      'AWS', 'Azure', 'Terraform', 'Kubernetes', 'Docker', 'Jenkins', 'Ansible', 
+      'Prometheus', 'Grafana', 'DevOps', 'Amazon Web Services (AWS)', 'Amazon EC2', 
+      'Amazon VPC', 'Amazon S3', 'Amazon Security Groups', 'AWS Lambda', 'Amazon EKS', 
+      'AWS Identity and Access Management (AWS IAM)', 'Google Kubernetes Engine (GKE)', 
+      'Google Cloud Platform (GCP)', 'Continuous Integration (CI)', 'HCL', 'CUDA'
+    ]
+    
+    const developmentSkills = [
+      'Java', 'Python', 'JavaScript', 'C', 'Spring Framework', 'Spring MVC', 
+      'Flask', 'React', 'ASP.NET', 'Spring Boot', 'Maven', 'Android Studio', 
+      'Android Development', 'UI/UX', 'TCP/UDP', 'gRPC', 'MongoDB', 'Redis', 
+      'Jupyter Notebook', 'Python (Programming Language)'
+    ]
+    
+    // Cloud skills - Blue
+    if (cloudSkills.some(cloudSkill => skill.toLowerCase().includes(cloudSkill.toLowerCase()))) {
+      return {
+        bg: 'bg-blue-50 dark:bg-blue-900/50',
+        text: 'text-blue-700 dark:text-blue-300',
+        border: 'border-blue-200/30 dark:border-blue-600/30',
+        hover: 'hover:border-blue-300/50 dark:hover:border-blue-500/50'
+      }
+    }
+    
+    // Development skills - Green
+    if (developmentSkills.some(devSkill => skill.toLowerCase().includes(devSkill.toLowerCase()))) {
+      return {
+        bg: 'bg-green-50 dark:bg-green-900/50',
+        text: 'text-green-700 dark:text-green-300',
+        border: 'border-green-200/30 dark:border-green-600/30',
+        hover: 'hover:border-green-300/50 dark:hover:border-green-500/50'
+      }
+    }
+    
+    // ML/Data and everything else - Purple
+    return {
+      bg: 'bg-purple-50 dark:bg-purple-900/50',
+      text: 'text-purple-700 dark:text-purple-300',
+      border: 'border-purple-200/30 dark:border-purple-600/30',
+      hover: 'hover:border-purple-300/50 dark:hover:border-purple-500/50'
+    }
+  }
+
   const sidebarFolders = [
     { id: 'about', name: 'About Me', icon: '/folder-icon.png' },
-    { id: 'education', name: 'Education', icon: '/folder-icon.png' },
-    { id: 'achievements', name: 'Achievements', icon: '/folder-icon.png' },
     { id: 'projects', name: 'Projects', icon: '/folder-icon.png' },
+    { id: 'achievements', name: 'Achievements', icon: '/folder-icon.png' },
     { id: 'certifications', name: 'Certifications', icon: '/folder-icon.png' },
-    { id: 'experience', name: 'Experience', icon: '/folder-icon.png' }
+    { id: 'experience', name: 'Experience', icon: '/folder-icon.png' },
+    { id: 'education', name: 'Education', icon: '/folder-icon.png' }
   ]
 
-  // Define folder contents
+  // Define folder contents with projects data
   const folderContents: FolderContent = {
     about: [
       { id: 'profile', name: 'Professional Profile.pdf', type: 'file', size: '2.3 MB', dateModified: 'Dec 15, 2024', icon: '📄' },
       { id: 'resume', name: 'Resume - Koushik Ravikumar.pdf', type: 'file', size: '1.8 MB', dateModified: 'Dec 10, 2024', icon: '📄' },
       { id: 'cover-letter', name: 'Cover Letter Template.docx', type: 'file', size: '45 KB', dateModified: 'Nov 28, 2024', icon: '📝' }
     ],
-    education: [
+    projects: [
       { 
-        id: 'stevens', 
-        name: 'Stevens Institute of Technology', 
+        id: 'ai-ml-pipeline', 
+        name: 'Cross Platform Model Development and Deployment Pipeline', 
         type: 'folder', 
         size: '--', 
         dateModified: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), 
         icon: '/folder-icon.png',
         content: {
-          degree: 'Master of Science',
-          field: 'Computer Science',
-          institution: 'Stevens Institute of Technology',
-          location: 'Hoboken, New Jersey',
-          duration: 'September 2024 – December 2025',
-          status: 'In Progress',
-          collegeLogo: '/stevens.png',
-          institutionBanner: '/stevensb.webp',
-          overview: 'Currently pursuing a Master\'s degree in Computer Science with a specialization in Enterprise and Cloud Computing. This program combines theoretical foundations with hands-on experience in modern cloud technologies and enterprise systems.',
-          courses: [
-            'Enterprise Software Architecture',
-            'Mobile Systems and Application',
-            'Algorithms',
-            'Object Oriented Analysis',
-            'Distributed Systems and Cloud Computing',
-            'Enterprise Cloud Security'
-          ],
-          achievements: [
-            'Developed comprehensive expertise in enterprise cloud systems and distributed architectures',
-            'Advanced proficiency in software development, system architecture, and scalable design patterns',
-            'Published research paper under the mentorship of Prof. Norman Ahmed for IEEE CS Cloud Conference 2025',
-            'Appointed as Teaching Assistant for Enterprise and Cloud Computing course',
-            'Mentored 40+ graduate students in complex cloud deployment projects and system design'
-          ],
-          publications: [
-            {
-              title: 'ML-DaaS: A Secure Integrated ML Training and Deployment Framework for Cloud',
-              conference: 'IEEE CS Cloud Conference',
-              year: '2025'
-            }
-          ]
+          title: 'Cross Platform Model Development and Deployment Pipeline',
+          duration: 'January 2025',
+          organization: 'Stevens Institute of Technology',
+          description: 'Automated instance setup with Ansible playbooks, including Jupyter Notebook and CUDA toolkit within 5 minutes. Integrated Terraform and Jenkins to enable dashboard access and streamline instance launch. Dockerized trained models and deployed them via Flask endpoints, reducing deployment cost by 50%.',
+          skills: ['Jenkins', 'Terraform', 'Ansible', 'Docker', 'Flask', 'CUDA', 'Jupyter Notebook'],
+          githubUrl: 'https://github.com/koushikpr/Cross-Platform-Model-Development-and-Deployment-Pipeline',
+          isOngoing: true,
+          status: 'Active'
         }
       },
       { 
-        id: 'pes', 
-        name: 'PES University', 
+        id: 'wifi-throughput-prediction', 
+        name: 'Next-Gen WiFi Throughput Prediction Challenge', 
         type: 'folder', 
         size: '--', 
-        dateModified: 'May 31, 2024', 
+        dateModified: 'Dec 10, 2024', 
         icon: '/folder-icon.png',
         content: {
-          degree: 'Bachelor of Technology',
-          field: 'Electronics and Communications',
-          institution: 'PES University',
-          location: 'Bangalore, India',
-          duration: 'December 2020 – May 2024',
-          status: 'Completed',
-          collegeLogo: '/pes.webp',
-          institutionBanner: '/pes.png',
-          overview: 'Completed Bachelor\'s degree in Electronics and Communications Engineering with a strong focus on both hardware and software aspects. Developed expertise in signal processing, communication systems, and programming that laid the foundation for my transition into software development and cloud computing.',
-          courses: [
-            'Computer Networks',
-            'Machine Learning',
-            'Comp. Architecture',
-            'Big Data Analytics',
-            'Network Theory',
-            'Data Structures and Algorithms',
-            'Object-Oriented Programming',
-            'Database Management Systems',
-            ''
-          ],
-          achievements: [
-            'Successfully completed 4-year engineering program',
-            'Strong performance in both theoretical and practical coursework',
-            'Developed multiple projects combining hardware and software',
-            'Active participation in technical workshops and seminars'
-          ],
-          publications: [
-            {
-              title: 'Throughput Prediction of Densely Deployed WLAN Using Graph Attention Networks',
-              conference: 'ICITS 2024',
-              year: '2024'
-            }
-          ]
+          title: 'Next-Gen WiFi Throughput Prediction Challenge by ITU AI/ML in 5G Challenge',
+          duration: '2024',
+          organization: 'PES University',
+          description: 'Machine Learning project for predicting WiFi throughput performance as part of the ITU AI/ML in 5G Challenge. Implements advanced ML algorithms for network performance optimization.',
+          skills: ['Machine Learning', 'Python', 'Jupyter Notebook', '5G Networks', 'WiFi Optimization', 'Data Science', 'Network Analysis'],
+          githubUrl: 'https://github.com/koushikpr/Next-Gen-WiFi-Throughput-Prediction-Challenge-by-ITU-AI-ML-in-5G-Challenge',
+          status: 'Completed'
+        }
+      },
+      { 
+        id: 'aws-terraform', 
+        name: 'AWS Infrastructure Building Using Terraform', 
+        type: 'folder', 
+        size: '--', 
+        dateModified: 'Nov 15, 2024', 
+        icon: '/folder-icon.png',
+        content: {
+          title: 'AWS Infrastructure Building Using Terraform',
+          duration: '2024',
+          organization: 'Seminarroom',
+          description: 'This Project demonstrates how to Deploy AWS Resources such as EC2, Security Groups, Routing Tables, Subnets, VPC, S3, Lambda, and EKS Using Terraform HCL Code',
+          skills: ['Terraform', 'Amazon S3', 'Amazon Security Groups', 'AWS', 'AWS Lambda', 'Amazon Web Services (AWS)', 'Amazon EC2', 'Amazon VPC', 'HCL', 'Amazon EKS', 'AWS Identity and Access Management (AWS IAM)'],
+          githubUrl: 'https://github.com/koushikpr/AWS-Configuration-Using-Terraform',
+          status: 'Completed'
+        }
+      },
+      { 
+        id: 'cicd-pipeline', 
+        name: 'CI/CD Pipeline for Deploying a Multi-Container Web Application', 
+        type: 'folder', 
+        size: '--', 
+        dateModified: 'Oct 25, 2024', 
+        icon: '/folder-icon.png',
+        content: {
+          title: 'CI/CD Pipeline for Deploying a Multi-Container Web Application on AWS EC2 Using Jenkins, Terraform and Kubernetes',
+          duration: '2024',
+          organization: 'Personal Project',
+          description: 'This Project demonstrates how to deploy a Python Flask Application on an AWS. The Pipeline Includes: 1. Building the Project Using Pip 2. Containerizing the Application using Docker 3. Creating AWS Resources Such as EC2 instance, Routing Tables, Security Groups and VPC Using Terraform 4. Configuration Management Using Ansible 5. Deployment using Kubernetes 6. CI/CD Using Git Webhook and Jenkins',
+          skills: ['Terraform', 'Ansible', 'Flask', 'Kubernetes', 'Jenkins', 'DevOps', 'Amazon Web Services (AWS)', 'Amazon EC2', 'Amazon VPC', 'Continuous Integration (CI)', 'Docker', 'Python (Programming Language)'],
+          githubUrl: 'https://github.com/koushikpr/CI-CD-Pipeline-for-Flask-App-Using-Git-and-Jenkins',
+          status: 'Completed'
+        }
+      },
+      { 
+        id: 'containerized-flask', 
+        name: 'Containerized Flask App Deployed On AWS EC2', 
+        type: 'folder', 
+        size: '--', 
+        dateModified: 'Sep 18, 2024', 
+        icon: '/folder-icon.png',
+        content: {
+          title: 'Containerized Flask App Deployed On AWS EC2 Using Docker, Kubernetes and Ansible',
+          duration: '2024',
+          organization: 'Personal Project',
+          description: 'This Project demonstrated how to deploy a Flask App automatically using Ansible Configuration Management.',
+          skills: ['Ansible', 'Flask', 'Kubernetes', 'Google Kubernetes Engine (GKE)', 'Amazon Web Services (AWS)', 'Amazon EC2', 'Docker', 'Python (Programming Language)'],
+          githubUrl: 'https://github.com/koushikpr/Containerized-Flask-App-Deployed-On-AWS-and-GKE',
+          status: 'Completed'
+        }
+      },
+      { 
+        id: 'spring-boot-gke', 
+        name: 'Multi-Container Spring Boot Application on GKE', 
+        type: 'folder', 
+        size: '--', 
+        dateModified: 'Aug 30, 2024', 
+        icon: '/folder-icon.png',
+        content: {
+          title: 'Deploying a Multi-Container Spring Boot Application on GKE using Docker and Kubernetes',
+          duration: '2024',
+          organization: 'Personal Project',
+          description: 'This Project demonstrates how to Deploy a Spring Boot Application with MongoDB dependencies On GKE by containerizing the application and Hosting on Google Kubernetes Engine.',
+          skills: ['Spring Framework', 'Redis', 'Maven', 'Kubernetes', 'Google Kubernetes Engine (GKE)', 'Spring MVC', 'Docker', 'MongoDB', 'Google Cloud Platform (GCP)', 'Java'],
+          githubUrl: 'https://github.com/koushikpr/Spring-Boot-Application-deployed-on-AWS-with-Ansible-Configuration',
+          status: 'Completed'
+        }
+      },
+      { 
+        id: 'mobile-chat-app', 
+        name: 'Mobile Chat Application', 
+        type: 'folder', 
+        size: '--', 
+        dateModified: 'Aug 20, 2024', 
+        icon: '/folder-icon.png',
+        content: {
+          title: 'Mobile Chat Application',
+          duration: 'August 2024',
+          organization: 'Stevens Institute of Technology',
+          description: 'Developed an Android chat application using Java, supporting TCP, UDP, and gRPC messaging. Implemented complex UI features including menu inflaters, lazy loading, and dynamic view updates. Deployed an AWS-based server mediator to handle communication upto 10 Android clients.',
+          skills: ['Java', 'Android Studio', 'TCP/UDP', 'gRPC', 'AWS', 'Android Development', 'UI/UX'],
+          githubUrl: 'https://github.com/koushikpr/Mobile-Chat-Application',
+          status: 'Completed'
         }
       }
     ],
@@ -138,11 +220,6 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
       { id: 'aws-cert', name: 'AWS Solution Architect Certificate.pdf', type: 'file', size: '1.2 MB', dateModified: 'May 15, 2025', icon: '🏆' },
       { id: 'hackathon', name: 'Duckathon 2024 Runner-up.jpg', type: 'file', size: '3.5 MB', dateModified: 'Oct 12, 2024', icon: '🥈' },
       { id: 'publications', name: 'Research Publications', type: 'folder', size: '--', dateModified: 'Nov 25, 2025', icon: '/folder-icon.png' }
-    ],
-    projects: [
-      { id: 'ml-pipeline', name: 'AI-ML Pipeline Project', type: 'folder', size: '--', dateModified: 'Jan 15, 2025', icon: '/folder-icon.png' },
-      { id: 'mobile-chat', name: 'Mobile Chat Application', type: 'folder', size: '--', dateModified: 'Aug 20, 2024', icon: '/folder-icon.png' },
-      { id: 'aws-terraform', name: 'AWS Infrastructure with Terraform', type: 'folder', size: '--', dateModified: 'Jul 10, 2024', icon: '/folder-icon.png' }
     ],
     certifications: [
       { id: 'aws-cert', name: 'AWS Solution Architect Certificate.pdf', type: 'file', size: '1.2 MB', dateModified: 'May 15, 2025', icon: '🏆' },
@@ -152,10 +229,12 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
       { id: 'stevens-ta', name: 'Stevens Institute - Teaching Assistant', type: 'folder', size: '--', dateModified: 'Sep 15, 2025', icon: '/folder-icon.png' },
       { id: 'sellwizr', name: 'SellWizr - Software Development Intern', type: 'folder', size: '--', dateModified: 'Aug 25, 2025', icon: '/folder-icon.png' },
       { id: 'antwalk', name: 'Antwalk - R&D Intern', type: 'folder', size: '--', dateModified: 'Jul 24, 2024', icon: '/folder-icon.png' }
+    ],
+    education: [
+      { id: 'stevens', name: 'Stevens Institute of Technology', type: 'folder', size: '--', dateModified: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), icon: '/folder-icon.png' },
+      { id: 'pes', name: 'PES University', type: 'folder', size: '--', dateModified: 'May 20, 2024', icon: '/folder-icon.png' }
     ]
   }
-
-
 
   // Get current folder contents
   const currentFolderContents = selectedFolder ? folderContents[selectedFolder] || [] : []
@@ -365,45 +444,20 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
             <div className="p-4 h-full overflow-y-auto">
               {selectedFileDetails ? (
                 <div className="space-y-4">
-                  {/* Institution Banner */}
-                  {selectedFileDetails.content?.institutionBanner ? (
-                    <div className="w-full">
-                      <img 
-                        src={selectedFileDetails.content.institutionBanner} 
-                        alt="institution banner" 
-                        className="w-full h-32 object-cover rounded-lg shadow-md" 
-                      />
-                    </div>
-                  ) : (
-                    /* File Icon and Name */
-                    <div className="text-center">
-                      {selectedFileDetails.content?.collegeLogo ? (
-                        <img src={selectedFileDetails.content.collegeLogo} alt="institution logo" className="w-16 h-16 mx-auto mb-2 object-contain" />
-                      ) : selectedFileDetails.icon.startsWith('/') ? (
-                        <img src={selectedFileDetails.icon} alt="icon" className="w-16 h-16 mx-auto mb-2" />
-                      ) : (
-                        <div className="text-6xl mb-2">{selectedFileDetails.icon}</div>
-                      )}
-                      <h4 className="font-medium text-gray-800 dark:text-teal-100 text-base">
-                        {selectedFileDetails.name}
-                      </h4>
-                      <p className="text-sm text-gray-500 dark:text-teal-400 mt-1">
-                        {selectedFileDetails.type === 'folder' ? 'Folder' : 'Document'}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {/* Institution Title (only show if banner exists) */}
-                  {selectedFileDetails.content?.institutionBanner && (
-                    <div className="text-center">
-                      <h4 className="font-medium text-gray-800 dark:text-teal-100 text-base">
-                        {selectedFileDetails.name}
-                      </h4>
-                      <p className="text-sm text-gray-500 dark:text-teal-400 mt-1">
-                        {selectedFileDetails.type === 'folder' ? 'Folder' : 'Document'}
-                      </p>
-                    </div>
-                  )}
+                  {/* File Icon and Name */}
+                  <div className="text-center">
+                    {selectedFileDetails.icon.startsWith('/') ? (
+                      <img src={selectedFileDetails.icon} alt="icon" className="w-16 h-16 mx-auto mb-2 object-contain" />
+                    ) : (
+                      <div className="text-6xl mb-2">{selectedFileDetails.icon}</div>
+                    )}
+                    <h4 className="font-medium text-gray-800 dark:text-teal-100 text-base">
+                      {selectedFileDetails.name}
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-teal-400 mt-1">
+                      {selectedFileDetails.type === 'folder' ? 'Project Folder' : 'Document'}
+                    </p>
+                  </div>
 
                   {/* File Details */}
                   <div className="bg-white/40 dark:bg-teal-dark-800/20 rounded-lg p-3 space-y-2 text-sm border border-gray-200/30 dark:border-teal-dark-600/30">
@@ -417,122 +471,63 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
                     </div>
                   </div>
 
-                  {/* Content Preview for Education Items */}
+                  {/* Content Preview for Project Items */}
                   {selectedFileDetails.content && (
                     <div className="bg-white/40 dark:bg-teal-dark-800/20 rounded-lg p-4 border border-gray-200/30 dark:border-teal-dark-600/30">
-                      {/* Institution Header */}
-                      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-gray-200/30 dark:border-teal-dark-600/30">
-                        {selectedFileDetails.content.collegeLogo?.startsWith('/') ? (
-                          <img 
-                            src={selectedFileDetails.content.collegeLogo} 
-                            alt={`${selectedFileDetails.content.institution} logo`}
-                            className="w-12 h-12 object-contain rounded-lg bg-white/60 dark:bg-teal-dark-700/40 p-1"
-                          />
-                        ) : (
-                          <span className="text-3xl">{selectedFileDetails.content.collegeLogo}</span>
-                        )}
-                        <div>
-                          <h5 className="font-bold text-gray-800 dark:text-teal-100 text-base">
-                            {selectedFileDetails.content.institution}
-                          </h5>
-                          <p className="text-sm text-gray-600 dark:text-teal-400">
-                            {selectedFileDetails.content.degree} in {selectedFileDetails.content.field}
-                          </p>
+                      {/* Project Header */}
+                      <div className="mb-4 pb-3 border-b border-gray-200/30 dark:border-teal-dark-600/30">
+                        <h5 className="font-bold text-gray-800 dark:text-teal-100 text-base mb-2">
+                          {selectedFileDetails.content.title}
+                        </h5>
+                        <p className="text-sm text-gray-600 dark:text-teal-400 mb-3">
+                          {selectedFileDetails.content.organization || 'Personal Project'}
+                        </p>
+                        {/* Skills */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedFileDetails.content.skills.map((skill: string, index: number) => {
+                            const colors = getSkillColor(skill)
+                            return (
+                              <motion.span
+                                key={index}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: index * 0.05, duration: 0.3 }}
+                                className={`px-2 py-1 ${colors.bg} ${colors.text} text-xs rounded-full border ${colors.border} ${colors.hover} hover:scale-105 transition-all cursor-default`}
+                              >
+                                {skill}
+                              </motion.span>
+                            )
+                          })}
                         </div>
                       </div>
 
-                      {/* Quick Info */}
-                      <div className="bg-gray-50/60 dark:bg-teal-dark-900/30 rounded-md p-3 mb-4 space-y-2 text-sm">
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-teal-400">
-                          <MapPin className="w-3 h-3" />
-                          <span>{selectedFileDetails.content.location}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-teal-400">
-                          <Calendar className="w-3 h-3" />
-                          <span>{selectedFileDetails.content.duration}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            selectedFileDetails.content.status === 'In Progress' 
-                              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                              : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                          }`}>
-                            {selectedFileDetails.content.status}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Overview */}
+                      {/* Description */}
                       <div className="mb-4">
                         <h6 className="font-semibold text-gray-700 dark:text-teal-200 text-sm mb-2 flex items-center gap-1">
                           <BookOpen className="w-3 h-3" />
-                          Overview
+                          Description
                         </h6>
                         <div className="bg-gray-50/40 dark:bg-teal-dark-900/20 rounded-md p-3">
                           <p className="text-sm text-gray-600 dark:text-teal-300 leading-relaxed">
-                            {selectedFileDetails.content.overview}
+                            {selectedFileDetails.content.description}
                           </p>
                         </div>
                       </div>
 
-                      {/* Key Courses and Publications */}
-                      <div className="grid grid-cols-2 gap-4">
-                        {/* Key Courses */}
-                        <div>
-                          <h6 className="font-semibold text-gray-700 dark:text-teal-200 text-sm mb-2 flex items-center gap-1">
-                            <GraduationCap className="w-3 h-3" />
-                            Key Courses
-                          </h6>
-                          <div className="bg-gray-50/40 dark:bg-teal-dark-900/20 rounded-md p-3">
-                            <div className="space-y-1">
-                              {selectedFileDetails.content.courses.slice(0, 4).map((course: string, index: number) => (
-                                <div key={index} className="flex items-center gap-2 text-sm text-gray-600 dark:text-teal-300">
-                                  <span className="w-1.5 h-1.5 bg-teal-500 rounded-full flex-shrink-0"></span>
-                                  <span>{course}</span>
-                                </div>
-                              ))}
-                              {selectedFileDetails.content.courses.length > 4 && (
-                                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-teal-400 italic mt-2 pt-2 border-t border-gray-200/30 dark:border-teal-dark-600/30">
-                                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0"></span>
-                                  <span>+{selectedFileDetails.content.courses.length - 4} more courses</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                      {/* GitHub Button */}
+                      {selectedFileDetails.content.githubUrl && (
+                        <div className="flex justify-center">
+                          <a
+                            href={selectedFileDetails.content.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-2 bg-teal-100 dark:bg-teal-dark-700 text-teal-700 dark:text-teal-200 rounded-md hover:bg-teal-200 dark:hover:bg-teal-dark-600 transition-colors"
+                          >
+                            <Github className="w-4 h-4" />
+                            <span className="text-sm font-medium">GitHub</span>
+                          </a>
                         </div>
-
-                        {/* Publications */}
-                        <div>
-                          <h6 className="font-semibold text-gray-700 dark:text-teal-200 text-sm mb-2 flex items-center gap-1">
-                            <BookOpen className="w-3 h-3" />
-                            Publications
-                          </h6>
-                          <div className="bg-gray-50/40 dark:bg-teal-dark-900/20 rounded-md p-3">
-                            <div className="space-y-2">
-                              {selectedFileDetails.content.publications?.map((publication: any, index: number) => (
-                                <div key={index} className="space-y-1">
-                                  <div className="flex items-start gap-2 text-sm">
-                                    <span className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0 mt-1"></span>
-                                    <div>
-                                      <p className="text-gray-700 dark:text-teal-200 font-medium leading-tight">
-                                        {publication.title}
-                                      </p>
-                                      <p className="text-gray-500 dark:text-teal-400 text-sm">
-                                        {publication.conference} ({publication.year})
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              )) || (
-                                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-teal-400">
-                                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0"></span>
-                                  <span>No publications yet</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -554,4 +549,4 @@ const EducationFinderWindow = ({ onClose, originX, originY, initialFolder = 'edu
   )
 }
 
-export default EducationFinderWindow
+export default ProjectsFinderWindow

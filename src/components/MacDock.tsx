@@ -3,6 +3,9 @@ import { motion } from 'framer-motion'
 
 import CalendarIcon from './CalendarIcon'
 import EducationFinderWindow from './EducationFinderWindow'
+import ProjectsFinderWindow from './ProjectsFinderWindow'
+import ExperienceFinderWindow from './ExperienceFinderWindow'
+import EventFinderWindow from './EventFinderWindow'
 
 const MacDock = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
@@ -131,13 +134,39 @@ const MacDock = () => {
     <>
       {/* Finder Windows */}
       {openWindows.filter(window => !window.isMinimized).map((window) => (
-        <EducationFinderWindow
-          key={window.id}
-          onClose={() => closeFolderWindow(window.id)}
-          originX={window.originX}
-          originY={window.originY}
-          initialFolder={window.folder}
-        />
+        window.folder === 'projects' ? (
+          <ProjectsFinderWindow
+            key={window.id}
+            onClose={() => closeFolderWindow(window.id)}
+            originX={window.originX}
+            originY={window.originY}
+            initialFolder={window.folder}
+          />
+        ) : window.folder === 'experience' ? (
+          <ExperienceFinderWindow
+            key={window.id}
+            onClose={() => closeFolderWindow(window.id)}
+            originX={window.originX}
+            originY={window.originY}
+            initialFolder={window.folder}
+          />
+        ) : window.folder === 'events' ? (
+          <EventFinderWindow
+            key={window.id}
+            onClose={() => closeFolderWindow(window.id)}
+            originX={window.originX}
+            originY={window.originY}
+            initialFolder={window.folder}
+          />
+        ) : (
+          <EducationFinderWindow
+            key={window.id}
+            onClose={() => closeFolderWindow(window.id)}
+            originX={window.originX}
+            originY={window.originY}
+            initialFolder={window.folder}
+          />
+        )
       ))}
 
       {/* Dock */}
