@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Award, BookOpen, MapPin, User, Mail, Phone, Github, Linkedin, Download, Calendar, ExternalLink, Briefcase, Users, Clock } from 'lucide-react'
+import { useDeviceDetection } from '../hooks/useDeviceDetection'
 
 interface MasterFinderWindowProps {
   onClose: () => void
@@ -29,6 +30,7 @@ const MasterFinderWindow: React.FC<MasterFinderWindowProps> = ({
   originY, 
   initialFolder = 'about' 
 }) => {
+  const deviceInfo = useDeviceDetection()
   const [selectedFolder, setSelectedFolder] = useState<string>(initialFolder)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [windowPosition, setWindowPosition] = useState({ x: 100, y: 100 })
@@ -657,7 +659,11 @@ const MasterFinderWindow: React.FC<MasterFinderWindowProps> = ({
         damping: 30,
         duration: 0.4
       }}
-      className="fixed z-50 w-[1000px] h-[700px] bg-white/95 dark:bg-teal-dark-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-teal-dark-600/50 rounded-xl shadow-2xl overflow-hidden select-none sf-font"
+      className={`fixed z-50 bg-white/95 dark:bg-teal-dark-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-teal-dark-600/50 rounded-xl shadow-2xl overflow-hidden select-none sf-font ${
+        deviceInfo.isMobile 
+          ? 'w-[90vw] h-[80vh] max-w-[600px] max-h-[500px]' 
+          : 'w-[1000px] h-[700px]'
+      }`}
       style={{
         left: 0,
         top: 0

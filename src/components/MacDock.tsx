@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useDeviceDetection } from '../hooks/useDeviceDetection'
 
 import CalendarIcon from './CalendarIcon'
 import MasterFinderWindow from './MasterFinderWindow'
 
 const MacDock = () => {
+  const deviceInfo = useDeviceDetection()
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [openWindows, setOpenWindows] = useState<Array<{id: string, title: string, originX: number, originY: number, folder: string, isMinimized: boolean}>>([])
 
@@ -150,12 +152,27 @@ const MacDock = () => {
             ))}
 
       {/* Dock */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+      <div 
+        className={`fixed left-1/2 transform -translate-x-1/2 z-50 ${
+          deviceInfo.isMobile ? 'bottom-2' : 'bottom-4'
+        }`}
+        style={{
+          // Apply same scaling as desktop for consistency
+          ...(deviceInfo.isMobile && deviceInfo.isLandscape && {
+            transform: 'translateX(-50%) scale(0.8)',
+            transformOrigin: 'bottom center'
+          })
+        }}
+      >
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
-          className="mac-dock-container flex items-end space-x-1 bg-white/10 dark:bg-teal-dark-900/20 backdrop-blur-xl rounded-2xl px-4 py-2 border border-white/20 dark:border-teal-dark-700/30 shadow-mac-xl"
+          className={`mac-dock-container flex items-end bg-white/10 dark:bg-teal-dark-900/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-teal-dark-700/30 shadow-mac-xl ${
+            deviceInfo.isMobile 
+              ? 'space-x-0.5 px-2 py-1' 
+              : 'space-x-1 px-4 py-2'
+          }`}
         >
         {dockItems.map((item) => (
           <React.Fragment key={item.id}>
@@ -190,11 +207,13 @@ const MacDock = () => {
             {/* Dock item */}
             <motion.button
               onClick={() => scrollToSection(item.section)}
-              className="mac-dock-item w-14 h-14 transition-all duration-200"
+              className={`mac-dock-item transition-all duration-200 ${
+                deviceInfo.isMobile ? 'w-10 h-10' : 'w-14 h-14'
+              }`}
               data-dock-id={item.id}
               animate={{
-                scale: hoveredItem === item.id ? 1.3 : 1,
-                y: hoveredItem === item.id ? -8 : 0,
+                scale: hoveredItem === item.id ? (deviceInfo.isMobile ? 1.1 : 1.3) : 1,
+                y: hoveredItem === item.id ? (deviceInfo.isMobile ? -4 : -8) : 0,
               }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
@@ -205,13 +224,19 @@ const MacDock = () => {
                   <img 
                     src={item.iconPath} 
                     alt={item.name}
-                    className="w-12 h-12 object-contain rounded-xl"
+                    className={`object-contain rounded-xl ${
+                      deviceInfo.isMobile ? 'w-8 h-8' : 'w-12 h-12'
+                    }`}
                     style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }}
                   />
                 )
               ) : item.icon ? (
-                <div className="w-12 h-12 bg-gradient-to-br from-mac-gray-200 to-mac-gray-400 rounded-xl flex items-center justify-center shadow-lg">
-                  {React.createElement(item.icon, { className: "w-7 h-7 text-mac-gray-700" })}
+                <div className={`bg-gradient-to-br from-mac-gray-200 to-mac-gray-400 rounded-xl flex items-center justify-center shadow-lg ${
+                  deviceInfo.isMobile ? 'w-8 h-8' : 'w-12 h-12'
+                }`}>
+                  {React.createElement(item.icon, { 
+                    className: deviceInfo.isMobile ? "w-5 h-5 text-mac-gray-700" : "w-7 h-7 text-mac-gray-700" 
+                  })}
                 </div>
               ) : null}
             </motion.button>
